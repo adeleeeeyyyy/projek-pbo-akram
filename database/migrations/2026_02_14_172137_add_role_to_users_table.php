@@ -10,20 +10,24 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::table('users', function (Blueprint $table) {
-        // Default kita kasih 'user' biar orang baru daftar bukan jadi admin
-        $table->string('role')->default('user')->after('email');
-    });
-}
+    {
+        if (!Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                // Default kita kasih 'user' biar orang baru daftar bukan jadi admin
+                $table->string('role')->default('user')->after('email');
+            });
+        }
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        if (Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('role');
+            });
+        }
     }
 };
